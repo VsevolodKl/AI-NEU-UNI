@@ -106,42 +106,69 @@ Custom classification head (обучаемая часть):
 └─ Dense(6, activation='softmax') → вероятности классов
 
 Характеристики архитектуры:
+
 Общее количество параметров: 3.5M
+
 Обучаемые параметры (замороженная база): ~165K
+
 Размер сохраненной модели: 13 МБ
+
 Время инференса на GPU T4: 22 мс/эпоху
+
 Память GPU: 1.8 ГБ
+
 
 2.3. Гиперпараметры обучения
 Конфигурация оптимизатора Adam:
+
 Learning rate: 0.001 (базовое обучение), 0.0001 (fine-tuning)
+
 Beta_1: 0.9, Beta_2: 0.999, Epsilon: 1e-7
 
+
 Параметры процесса обучения:
+
 Batch size: 32 изображения
+
 Количество эпох: 10 (базовое) + 5 (fine-tuning)
+
 Функция потерь: SparseCategoricalCrossentropy
+
 Метрика оценки: accuracy
+
 Регуляризация: Dropout(0.3)
 
+
 Аугментация данных (применяется на лету):
+
 tf.keras.layers.RandomFlip("horizontal")
+
 tf.keras.layers.RandomRotation(0.1) # ±5.7°
+
 tf.keras.layers.RandomZoom(0.1) # ±10%
 
+
 Кollбэки:
+
 EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+
 ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=2)
 
 2.4. Результаты тестирования
 Оценка на тестовой выборке (360 изображений):
 
 Основные метрики (Алгоритм 4):
+
 Test Accuracy: 99.34%
+
 Test Loss: 0.0426
+
 F1-score (macro): 0.993
+
 Precision: 0.994
+
 Recall: 0.993
+
 Правильных предсказаний: 358 из 360
 
 Матрица ошибок:
