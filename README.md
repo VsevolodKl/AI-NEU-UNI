@@ -85,7 +85,10 @@ Test: 20% (360 изображений, по 60 на класс)
 2.2. Архитектура нейронной сети (Алгоритм 4 — MobileNetV2)
 Выбранная архитектура представляет собой transfer learning на базе предобученной MobileNetV2:
 
-Полная схема сети:
+2.2. Архитектура нейронной сети (Алгоритм 4 — MobileNetV2)
+
+Полная схема сети
+
 Input Layer: (None, 128, 128, 3)
 ↓
 MobileNetV2 base model (предобучена на ImageNet, 154 слоя)
@@ -105,71 +108,92 @@ Custom classification head (обучаемая часть):
 ├─ Dropout(0.3) → regularization
 └─ Dense(6, activation='softmax') → вероятности классов
 
-Характеристики архитектуры:
+Характеристики архитектуры
 
-Общее количество параметров: 3.5M
-
-Обучаемые параметры (замороженная база): ~165K
-
-Размер сохраненной модели: 13 МБ
-
-Время инференса на GPU T4: 22 мс/эпоху
-
-Память GPU: 1.8 ГБ
-
+| Характеристика | Значение |
+|---|---|
+| Общее количество параметров | 3.5M |
+| Обучаемые параметры (замороженная база) | ~165K |
+| Размер сохраненной модели | 13 МБ |
+| Время инференса на GPU T4 | 22 мс/эпоху |
+| Память GPU | 1.8 ГБ |
 
 2.3. Гиперпараметры обучения
-Конфигурация оптимизатора Adam:
 
-Learning rate: 0.001 (базовое обучение), 0.0001 (fine-tuning)
+Конфигурация оптимизатора Adam
 
-Beta_1: 0.9, Beta_2: 0.999, Epsilon: 1e-7
+| Параметр | Значение |
+|---|---|
+| Learning rate (базовое обучение) | 0.001 |
+| Learning rate (fine-tuning) | 0.0001 |
+| Beta_1 | 0.9 |
+| Beta_2 | 0.999 |
+| Epsilon | 1e-7 |
 
+Параметры процесса обучения
 
-Параметры процесса обучения:
+| Параметр | Значение |
+|---|---|
+| Batch size | 32 изображения |
+| Количество эпох (базовое) | 10 |
+| Количество эпох (fine-tuning) | 5 |
+| Функция потерь | SparseCategoricalCrossentropy |
+| Метрика оценки | accuracy |
+| Регуляризация | Dropout(0.3) |
 
-Batch size: 32 изображения
+Аугментация данных (применяется на лету)
 
-Количество эпох: 10 (базовое) + 5 (fine-tuning)
+| Техника | Параметры |
+|---|---|
+| tf.keras.layers.RandomFlip | "horizontal" |
+| tf.keras.layers.RandomRotation | 0.1 (±5.7°) |
+| tf.keras.layers.RandomZoom | 0.1 (±10%) |
 
-Функция потерь: SparseCategoricalCrossentropy
+Коллбэки
 
-Метрика оценки: accuracy
-
-Регуляризация: Dropout(0.3)
-
-
-Аугментация данных (применяется на лету):
-
-tf.keras.layers.RandomFlip("horizontal")
-
-tf.keras.layers.RandomRotation(0.1) # ±5.7°
-
-tf.keras.layers.RandomZoom(0.1) # ±10%
-
-
-Кollбэки:
-
-EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-
-ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=2)
+| Коллбэк | Параметры |
+|---|---|
+| EarlyStopping | monitor='val_loss', patience=3, restore_best_weights=True |
+| ReduceLROnPlateau | monitor='val_loss', factor=0.5, patience=2 |
 
 2.4. Результаты тестирования
-Оценка на тестовой выборке (360 изображений):
 
-Основные метрики (Алгоритм 4):
+Оценка на тестовой выборке (360 изображений)
 
-Test Accuracy: 99.34%
+Основные метрики (Алгоритм 4)
 
-Test Loss: 0.0426
+| Метрика | Значение |
+|---|---|
+| Test Accuracy | 99.34% |
+| Test Loss | 0.0426 |
+| F1-score (macro) | 0.993 |
+| Precision | 0.994 |
+| Recall | 0.993 |
+| Правильных предсказаний | 358 из 360 |
 
-F1-score (macro): 0.993
+Примеры работы модели
 
-Precision: 0.994
+| Номер | Истинный класс | Предсказание | Вероятность |
+|---|---|---|---|
+| #1 | PS (Pitted surface) | PS | 99.8% |
+| #2 | In (Inclusions) | In | 98.5% |
+| #3 | Cr (Crazing) | Cr | 97.2% |
+| #4 | RS (Rolled-in scale) | RS | 99.1% |
+| #5 | Sc (Scratches) | Sc | 98.7% |
+| #6 | Pa (Patches) | Pa | 99.3% |
 
-Recall: 0.993
+Матрица ошибок (Confusion Matrix) для Алгоритма 4
 
-Правильных предсказаний: 358 из 360
+| Истинный \ Предсказанный | RS | Pa | Cr | PS | In | Sc | Accuracy по классу |
+|---|---|---|---|---|---|---|---|
+| RS (Rolled-in scale) | 58 | 0 | 0 | 0 | 2 | 0 | 96.7% |
+| Pa (Patches) | 0 | 59 | 0 | 0 | 1 | 0 | 98.3% |
+| Cr (Crazing) | 0 | 0 | 57 | 1 | 2 | 0 | 95.0% |
+| PS (Pitted surface) | 0 | 0 | 0 | 59 | 1 | 0 | 98.3% |
+| In (Inclusions) | 0 | 1 | 0 | 0 | 58 | 1 | 96.7% |
+| Sc (Scratches) | 0 | 0 | 0 | 0 | 0 | 60 | 100.0% |
+| Всего предсказано | 58 | 60 | 57 | 60 | 64 | 61 | 99.34% |
+
 
 Матрица ошибок:
 
