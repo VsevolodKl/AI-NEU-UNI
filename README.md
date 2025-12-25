@@ -40,7 +40,7 @@
 
 Input: (None, 128, 128, 3)
 ↓
-MobileNetV2 base (предобучена ImageNet, 154 слоя):
+MobileNetV2 base (предобучена ImageNet, 154 слоя):  
 ├─ Initial Conv2D: 32 фильтра, 3×3, stride=2  
 ├─ 17 Inverted Residual Blocks:  
 │ ├─ Expansion factor: 1-6  
