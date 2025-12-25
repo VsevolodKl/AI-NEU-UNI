@@ -41,17 +41,17 @@
 Input: (None, 128, 128, 3)
 ↓
 MobileNetV2 base (предобучена ImageNet, 154 слоя):
-├─ Initial Conv2D: 32 фильтра, 3×3, stride=2
-├─ 17 Inverted Residual Blocks:
-│ ├─ Expansion factor: 1-6
-│ ├─ Depthwise Conv2D: 3×3
-│ ├─ Pointwise Conv2D: 1×1
-│ └─ Skip connections (residual)
-└─ Final Conv2D: 1280 фильтров, 1×1
-↓
-GlobalAveragePooling2D → (None, 1280)
-↓
-Dense(6, softmax)
+├─ Initial Conv2D: 32 фильтра, 3×3, stride=2  
+├─ 17 Inverted Residual Blocks:  
+│ ├─ Expansion factor: 1-6  
+│ ├─ Depthwise Conv2D: 3×3  
+│ ├─ Pointwise Conv2D: 1×1  
+│ └─ Skip connections (residual)  
+└─ Final Conv2D: 1280 фильтров, 1×1  
+↓  
+GlobalAveragePooling2D → (None, 1280)  
+↓  
+Dense(6, softmax)  
 
 
 **model.summary():**  
